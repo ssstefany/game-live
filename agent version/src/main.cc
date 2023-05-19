@@ -1,18 +1,21 @@
 #include <global.h>
 #include <checkArgs.hpp>
-
+#include <clock.h>
 #include <agent.h>
 #include <environment.h>
 
-
 int main(int argc, char *argv [])
 {
-
 	uint32_t filas;
 	uint32_t columnas;
 	uint32_t iteraciones;
 	float    probLive;
-
+	uint32_t typeOfProc;			//tipo de procesamiento, 0: secuencial, 1: vectorial
+	uint32_t display;
+	
+	uint32_t sequentialProc {0};
+	uint32_t vectorialProc {1};
+	float sumSeq {}, sumVec {}, avgSeq {}, avgVec {};
 
 	checkArgs* argumentos = new checkArgs(argc, argv);
 
@@ -20,30 +23,60 @@ int main(int argc, char *argv [])
 	columnas    = argumentos->getArgs().NCOLS;
 	iteraciones = argumentos->getArgs().ITERATIONS;
 	probLive    = argumentos->getArgs().PROBLIVE;
+	typeOfProc	= argumentos->getArgs().TYPEOFPROC;
+	display		= argumentos->getArgs().DISPLAY;
 
-	// Crear el ambiente
+	//Crear tamaño del ambiente
 	CoordXY  size_env = {columnas, filas};
-	Environment* universe = new Environment(size_env);
-	
-	//Crear los agentes
-	// Cada agente se agrega al ambiente, con sus respectivas
-	// coordenadas (x,y) a partir de su id y el tamaño del universo
-	
-	//srand(time(NULL));
-	Agent::_myEnv = universe;
-	for(uint32_t id = 0; id < universe->getCapacityAgents(); id++) {	
-		universe->addAgent( new Agent(id, probLive) );
-	}
+	// Crear el ambiente
+	Environment* sequentialUniverse = new Environment(size_env);
+	Environment* vectorUniverse{nullptr};
 
-	universe->setNeighborsAgents();
+	// Inicializar ambiente: crear los agentes (celulas), añadirlos al ambiente y establecer vecinos 
+
+	// Sequiential Universe: procesamiento secuencial	
+	sequentialUniverse->initEnvironment(probLive);
+	// Vector Universe : procesamiento vectorial
+	if (typeOfProc == 1) {
+		vectorUniverse = new Environment(size_env);
+		vectorUniverse->initEnvironment(probLive);
+	};
 
 	for(uint32_t it = 0; it < iteraciones; it++) {
-		puts ("\033[H\033[J");
-		universe->showAgents(it);
-		universe->applyAgentsRules();
-		universe->updateAgents();
-		//getchar();
+		
+		//Si se activa display mostrar el tablero
+		if (display) sequentialUniverse->displayBoard(it);
+
+		//Aplicar reglas a la generacion actual
+		//imprimir generación y el tiempo de procedimiento secuencial
+		//actualizar los estados de los agentes
+		sumSeq += measureTime([&](){sequentialUniverse->applyAgentsRules(sequentialProc);});
+		sequentialUniverse->printDataSec(it);
+		sequentialUniverse->updateAgents();
+		
+		//Mismo procedimiento a universo vectorial en caso de ser activado
+		if (typeOfProc) {
+			sumVec += measureTime([&](){vectorUniverse->applyAgentsRules(vectorialProc);});
+			vectorUniverse->printDataVec();
+			vectorUniverse->updateAgents();
+		}
+
 		usleep(100000);
+	};
+
+	
+	auto calculateAvg = [&] (float sum){
+		float avg {};
+		avg = sum/iteraciones;
+		return avg;
+	};
+	
+	avgSeq = calculateAvg(sumSeq);
+	std::cout <<"\n" << avgSeq << " ms";
+
+	if (typeOfProc) {
+		avgVec = calculateAvg(sumVec);
+		std::cout << " : " <<avgVec << " ms\n";
 	}
 
 	/*
@@ -81,7 +114,8 @@ int main(int argc, char *argv [])
 	*/
 
 	delete argumentos;
-	delete universe;
+	delete sequentialUniverse;
+	delete vectorUniverse;
 
 	return(EXIT_SUCCESS);
 }

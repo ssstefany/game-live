@@ -9,21 +9,25 @@ extern int optind, opterr, optopt;
 class checkArgs {
 private:
 	// 1) Modificar esta sección
-	const std::string optString = "r:c:i:s:h";
+	const std::string optString = "r:c:i:s:p:d:h";
 	
-	const std::string opciones = "-r NROWS -c NCOLS -i ITERATIONS -s PROBLIVE [-h]";
+	const std::string opciones = "-r NROWS -c NCOLS -i ITERATIONS -s PROBLIVE -p TYPEOFPROC -d DISPLAY [-h]";
 
 	const std::string descripcion  = "Descripción:\n"
 								     "\t-r   Número de filas\n"
 									 "\t-c   Número de columnas\n"
 									 "\t-i   Número de iteraciones\n"
-									 "\t-s   Probabilidad incial de que una célula esté viva\n";
+									 "\t-s   Probabilidad incial de que una célula esté viva\n"
+									 "\t-p   Tipo de procesamiento ( [0] Sec ; [1] Vec ) \n"
+									 "\t-d   Mostrar tablero ( [0] No ; [1] Si ) (\n";
 	
 	typedef struct args_t{
 		int32_t NROWS;
 		int32_t NCOLS;
 		int32_t ITERATIONS;
 		float   PROBLIVE;
+		int32_t	TYPEOFPROC;
+		int32_t	DISPLAY;
 	} args_t;
 	
 	// 2) Modificar constructor
@@ -53,6 +57,8 @@ checkArgs::checkArgs(int _argc , char **_argv){
 	parametros.NCOLS        = 0;
 	parametros.ITERATIONS   = 0;
 	parametros.PROBLIVE     = 0.0;
+	parametros.TYPEOFPROC	= 0;
+	parametros.DISPLAY		= 0;
 	
 	argc = _argc;
 	argv = _argv;
@@ -80,6 +86,12 @@ checkArgs::args_t checkArgs::getArgs(){
 			case 's':
 					parametros.PROBLIVE = atof(optarg);
 					break;
+			case 'p':
+					parametros.TYPEOFPROC = atoi(optarg);
+					break;
+			case 'd':
+					parametros.DISPLAY = atoi(optarg);
+					break;
 			case 'h':
 			default:
 					printUsage();
@@ -90,7 +102,9 @@ checkArgs::args_t checkArgs::getArgs(){
 	if ( parametros.NROWS <=0 ||
 		 parametros.NCOLS <= 0 ||
 		 parametros.ITERATIONS <= 0 ||
-	     parametros.PROBLIVE <= 0.0 || parametros.PROBLIVE > 1.0) {
+	     parametros.PROBLIVE <= 0.0 || parametros.PROBLIVE > 1.0 ||
+		 (parametros.TYPEOFPROC != 0 && parametros.TYPEOFPROC != 1) ||
+		 (parametros.DISPLAY != 0 && parametros.DISPLAY != 1) ) {
 		printUsage();
 		exit(EXIT_FAILURE);
 	}

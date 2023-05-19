@@ -14,11 +14,19 @@
 #include <chrono>
 #include <unistd.h>
 
+
+
 class Environment;
 class Agent;
 
 
-typedef std::vector<Agent*> Neighbors;
+//typedef std::vector<Agent*> Neighbors;
+
+
+
+//using StateNeighbors = std::vector<float*>;
+
+//usign 
 
 struct coord_t {
 	uint32_t x;
@@ -32,12 +40,17 @@ enum TIME {
 	FUTURE
 };
 
-enum STATE { 
-	DEAD,
-	LIVE
-};
+// enum STATE { 
+// 	DEAD,
+// 	LIVE
+// };
 
-typedef enum STATE State;
+// typedef enum STATE State;
+typedef float State;
 
+constexpr State DEAD = 0;
+constexpr State LIVE = 1;
+
+using Neighbors = std::vector<const State*>;
 
 #endif

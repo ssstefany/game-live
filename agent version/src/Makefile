@@ -8,7 +8,7 @@ INCLUDES=-I../include
 LDFLAGS=
 LDLIBS=
 
-CXXFLAGS=-std=c++14 -Wall
+CXXFLAGS=-std=c++17 -Wall
 
 DIR_OBJ=objs
 
