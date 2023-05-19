@@ -1,3 +1,1 @@
-# Game-of-live# game-live
-# game-live
-# game-live
+# Game-of-live - Versión secuencial y vectorial
