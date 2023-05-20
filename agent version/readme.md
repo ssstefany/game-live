@@ -1,6 +1,6 @@
 # Juego de la Vida. Versión implementada bajo el paradigma de Simulación basada en Agentes
 
-Documentación en el directorio ```docs```. 
+Implementación a partir de código base disponible en https://github.com/gabriel-astudillo/Game-of-live.
 
 Este es una implementación del Juego de la vida [Conway, J. (1970). The game of life. Scientific American, 223(December 2010), 120–123], basado en Agentes.
 
@@ -32,13 +32,13 @@ Ejemplo de salida:
 ║                    ║
 ║                    ║
 ║                    ║
-║  ▊            ▊    ║
-║ ▊   ▊        ▊ ▊   ║
-║ ▊ ▊         ▊   ▊  ║
-║ ▊          ▊   ▊   ║
-║ ▊▊   ▊▊      ▊     ║
-║  ▊▊▊▊▊    ▊  ▊     ║
-║   ▊▊▊     ▊▊       ║
+║  ▊            ▊   ║
+║ ▊   ▊        ▊▊ ║
+║ ▊ ▊         ▊ ▊ ║
+║ ▊          ▊   ▊ ║
+║ ▊▊   ▊▊      ▊  ║
+║  ▊▊▊▊▊    ▊  ▊║
+║   ▊▊▊     ▊▊    ║
 ╚════════════════════╝
 Generación: 10, Células vivas: 30
 ```
